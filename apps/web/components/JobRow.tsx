@@ -21,13 +21,14 @@ const AUTH_TYPE_STYLES: Record<AuthType, string> = {
 
 function formatTimestamp(ts: string): string {
   const d = new Date(ts.replace(" ", "T") + "Z");
-  return d.toLocaleString(undefined, {
+  return d.toLocaleString("en-US", {
     hour: "numeric",
     minute: "2-digit",
     second: "2-digit",
     month: "short",
     day: "numeric",
-  });
+    timeZone: "UTC",
+  }) + " UTC";
 }
 
 export function JobRow({ job }: { job: Job }) {
