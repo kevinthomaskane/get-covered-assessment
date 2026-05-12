@@ -12,6 +12,7 @@ const STEALTH_INIT = `
 `;
 
 const NAV_TIMEOUT_MS = 30_000;
+const NETWORK_IDLE_TIMEOUT_MS = 8_000;
 
 let browser: Browser | null = null;
 let context: BrowserContext | null = null;
@@ -37,6 +38,14 @@ export async function renderPage(url: string): Promise<string> {
       waitUntil: "domcontentloaded",
       timeout: NAV_TIMEOUT_MS,
     });
+    try {
+      await page.waitForLoadState("networkidle", {
+        timeout: NETWORK_IDLE_TIMEOUT_MS,
+      });
+    } catch {
+      // Network never quieted within budget (chat widgets, analytics polls,
+      // long-poll connections, etc). Fall through and scrape what we have.
+    }
     return await page.content();
   } finally {
     await page.close();
