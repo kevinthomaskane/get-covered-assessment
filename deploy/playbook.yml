@@ -129,7 +129,7 @@
         COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
 
     - name: Install Playwright Chromium
-      shell: pnpm exec playwright install chromium
+      shell: pnpm --filter @app/worker exec playwright install chromium
       args:
         chdir: "{{ repo_dir }}"
       environment:
