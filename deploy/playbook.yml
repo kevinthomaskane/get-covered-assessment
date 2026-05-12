@@ -144,12 +144,21 @@
 
     # --- Environment ---
 
-    - name: Write .env at repo root
+    - name: Write .env at repo root (loaded by the worker via tsx --env-file)
       copy:
         dest: "{{ repo_dir }}/.env"
         mode: "0600"
         content: |
           ANTHROPIC_API_KEY={{ anthropic_api_key }}
+          DB_PATH={{ data_dir }}/jobs.db
+          NODE_ENV=production
+      no_log: true
+
+    - name: Write .env.local for Next.js (auto-loaded from apps/web)
+      copy:
+        dest: "{{ repo_dir }}/apps/web/.env.local"
+        mode: "0600"
+        content: |
           DB_PATH={{ data_dir }}/jobs.db
           NODE_ENV=production
       no_log: true
