@@ -1,0 +1,21 @@
+{
+  "name": "get-covered-assessment",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.25.0",
+  "scripts": {
+    "dev:web": "pnpm --filter @app/web dev",
+    "dev:worker": "pnpm --filter @app/worker dev",
+    "build": "pnpm --filter @app/web build",
+    "start:web": "pnpm --filter @app/web start",
+    "start:worker": "pnpm --filter @app/worker start"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  }
+}
