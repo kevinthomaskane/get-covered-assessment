@@ -20,5 +20,8 @@ data/
 .vscode
 
 deploy/vars.yml
+deploy/inventory.ini
+
+*.tsbuildinfo
 
 docs/*.pdf

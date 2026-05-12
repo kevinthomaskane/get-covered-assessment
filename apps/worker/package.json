@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch index.ts",
-    "start": "tsx index.ts"
+    "dev": "tsx watch --env-file=../../.env index.ts",
+    "start": "tsx --env-file=../../.env index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.2",

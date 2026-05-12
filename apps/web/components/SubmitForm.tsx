@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { submitUrl } from "./actions";
+import { submitUrl } from "@/app/actions";
 
-export function SubmitForm() {
+interface SubmitFormProps {
+  onSubmitted: () => void | Promise<void>;
+}
+
+export function SubmitForm({ onSubmitted }: SubmitFormProps) {
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const router = useRouter();
 
   function onSubmit(formData: FormData) {
     setError(null);
@@ -19,15 +21,12 @@ export function SubmitForm() {
         return;
       }
       setUrl("");
-      router.refresh();
+      await onSubmitted();
     });
   }
 
   return (
-    <form
-      action={onSubmit}
-      className="mt-6 flex flex-wrap items-center gap-2"
-    >
+    <form action={onSubmit} className="mt-6 flex flex-wrap items-center gap-2">
       <input
         type="url"
         name="url"
@@ -45,9 +44,7 @@ export function SubmitForm() {
       >
         {pending ? "Submitting…" : "Submit"}
       </button>
-      {error && (
-        <p className="w-full text-sm text-red-700">{error}</p>
-      )}
+      {error && <p className="w-full text-sm text-red-700">{error}</p>}
     </form>
   );
 }

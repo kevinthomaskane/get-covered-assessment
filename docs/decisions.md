@@ -67,7 +67,7 @@ User message: "<untrusted_html>
 ├── pnpm-lock.yaml
 ├── tsconfig.base.json
 ├── apps/
-│   ├── worker/               # bun runs src/index.ts (queue loop)
+│   ├── worker/               # tsx runs index.ts (queue loop)
 │   │   ├── package.json
 │   │   └── src/
 │   └── web/                  # Next.js app

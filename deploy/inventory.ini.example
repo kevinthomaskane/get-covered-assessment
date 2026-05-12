@@ -1,0 +1,4 @@
+[gca]
+# Copy to inventory.ini and fill in the VPS host.
+# inventory.ini is git-ignored.
+<your-host-or-ip> ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519
