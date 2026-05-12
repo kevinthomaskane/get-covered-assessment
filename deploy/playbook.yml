@@ -66,7 +66,9 @@
     - name: Enable corepack and prepare pnpm
       shell: |
         corepack enable
-        corepack prepare pnpm@latest --activate
+        corepack prepare pnpm@10.25.0 --activate
+      environment:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
       changed_when: false
 
     - name: Install PM2 globally
@@ -123,16 +125,22 @@
       shell: pnpm install --frozen-lockfile
       args:
         chdir: "{{ repo_dir }}"
+      environment:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
 
     - name: Install Playwright Chromium
       shell: pnpm exec playwright install chromium
       args:
         chdir: "{{ repo_dir }}"
+      environment:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
 
     - name: Build Next.js app
       shell: pnpm --filter @app/web build
       args:
         chdir: "{{ repo_dir }}"
+      environment:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
 
     # --- Environment ---
 
