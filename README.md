@@ -43,6 +43,20 @@ pnpm run start:worker
 
 Then submit a URL via the form. Try `https://github.com/login` or `https://news.ycombinator.com/login` for quick smoke tests.
 
+## Verified examples
+
+Run against the live demo across the site categories called out in the assessment brief:
+
+| Category   | URL                                  | Detected auth type | Snippet returned          |
+| ---------- | ------------------------------------ | ------------------ | ------------------------- |
+| SaaS       | `https://vercel.com/login`           | `multi-step`       | Yes                       |
+| Dev tools  | `https://github.com/login`           | `multi-step`       | Yes                       |
+| Community  | `https://stackoverflow.com/users/login` | `password`      | Yes                       |
+| News       | `https://news.ycombinator.com/login` | `password`         | Yes                       |
+| Publishing | `https://substack.com/sign-in`       | `magic-link`       | Yes                       |
+| Video      | `https://youtube.com`                | `sso`              | Yes                       |
+| Marketing  | `https://10xdev.io`                  | `unknown`          | No — correctly reports "no authentication component found" |
+
 ## Project layout
 
 ```
