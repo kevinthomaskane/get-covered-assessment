@@ -4,6 +4,26 @@ Lightweight ADR-style log. Each entry: decision, context, alternatives considere
 
 ---
 
+## D-024: Always-poll on the client, no conditional start/stop
+
+**Date:** 2026-05-14
+**Status:** Proposed
+**Supersedes:** the polling-lifecycle bullet in D-014.
+
+**Decision:** `JobsView` runs a single `setInterval` for the lifetime of the component, fetching `/api/jobs` every 1.5s. No "start polling on active job, stop when idle." Submit triggers an immediate refetch so the user sees their new row without waiting up to a poll interval.
+
+**Alternatives considered:**
+- **Conditional polling driven by `hasActiveJob(jobs)`** (the original D-014 design). Rejected after repeated race conditions: an in-flight fetch started before a submit can resolve afterward, observe no active jobs, and stop the freshly-restarted interval. Each fix (refs, epoch counters, AbortController) adds coordination state for an optimization with thin payoff.
+- **Client-tracked Set of outstanding job ids as the polling-decision source of truth.** Cleaner than the above — separates "what work am I waiting on" from "what should I display" — and eliminates the stop-polling race. Rejected because it's fundamentally a single-client optimization: another browser tab or worker can create a job this client never learns about, since polling is gated by *this* client's submissions. Multi-client visibility requires always-poll or push.
+- **SSE / WebSocket.** Right answer for real-time, but new infra for a tool with one user and one worker.
+- **TanStack Query / SWR.** Equivalent end result with cancellation, dedup, and focus-refetch for free. Worth it once polling appears in more than one place; not worth the dependency for a single component.
+
+**Rationale:** The conditional-polling optimization was the source of a class of races that all stemmed from the same root cause — the lifecycle decision (poll or don't) was derived from server-fetched view state, so any stale fetch could mis-decide. Always-poll deletes the decision and the race surface with it. Cost is one small JSON request every 1.5s per open tab — negligible at this scale.
+
+**Implementation:** `useEffect` mounts a `setInterval(fetchJobs, 1500)` and clears it on unmount; `SubmitForm`'s `onSubmitted` is wired to `fetchJobs` for an immediate refresh after submit. No refs, no cross-component lifecycle coordination.
+
+---
+
 ## D-023: Tailwind CSS v4 for styling
 
 **Date:** 2026-05-11
@@ -214,7 +234,7 @@ User message: "<untrusted_html>
   - Model notes
   - For `completed` + null snippet: explicit "no auth component found" state (not just an empty box).
   - For `failed`: the error message instead of the snippet.
-- Client polls `GET /api/jobs` every 1–2s while any non-terminal job exists; stops polling once all jobs are `completed`/`failed`.
+- Client polls `GET /api/jobs` every 1–2s while any non-terminal job exists; stops polling once all jobs are `completed`/`failed`. *(Superseded by D-024 — always-poll.)*
 
 **Alternatives considered:**
 - SSE / WebSockets: cleaner for live updates but adds infra for marginal demo value.

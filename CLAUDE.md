@@ -24,7 +24,7 @@ The worker loads env via `tsx --env-file=../../.env` — put `ANTHROPIC_API_KEY`
 ## Architecture
 
 **Three workspaces:**
-- `apps/web` — Next.js 16 App Router. Server action `submitUrl` (zod-validated, SSRF-guarded), route handler `GET /api/jobs`. The home page server-fetches initial jobs and hands off to a client `JobsView` that polls `/api/jobs` every 1.5s while any job is non-terminal.
+- `apps/web` — Next.js 16 App Router. Server action `submitUrl` (zod-validated, SSRF-guarded), route handler `GET /api/jobs`. The home page server-fetches initial jobs and hands off to a client `JobsView` that polls `/api/jobs` every 1.5s for the lifetime of the component, with an immediate refetch on submit.
 - `apps/worker` — Long-running Node process that polls SQLite, claims a row atomically, renders the page with Playwright, cleans the HTML with cheerio, asks Claude to identify the auth component, validates the response with zod (one retry on failure), and writes the result back.
 - `packages/shared` — Zod schemas, `Job` types, and the SQLite layer. Imported by both apps as `@app/shared`.
 
